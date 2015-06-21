@@ -23,7 +23,7 @@ class Varnish
             $this->path = getenv('VARNISH_PATH');
         }
 
-        $enabled = getenv('CDN_ENABLED') === 'true' ? true : false;
+        $enabled = getenv('VARNISH_ENABLED') === 'true' ? true : false;
 
         if ($enabled) {
             $this->setHooks();
