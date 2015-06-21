@@ -1,0 +1,41 @@
+{
+  "name": "getsuzie/suzie",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://wpackagist.org"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Suzie\\": "suzie/"
+    },
+    "files": [
+      "suzie/bootstrap/app.php"
+    ]
+  },
+  "require": {
+    "johnpbloch/wordpress": "4.2.*",
+    "vlucas/phpdotenv": "1.1.*",
+    "league/flysystem": "~1.0",
+    "league/flysystem-aws-s3-v2": "~1.0",
+    "league/flysystem-sftp": "~1.0",
+    "mailgun/mailgun-php": "~1.7.2",
+    "mtdowling/cron-expression": "~1.0",
+    "nesbot/carbon": "~1.18"
+  },
+  "extra": {
+    "installer-paths": {
+      "public/wordpress/content/plugins/{$name}/": ["type:wordpress-plugin"]
+    },
+    "wordpress-install-dir": "public/wordpress"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "env php suzie/bootstrap/cdn.php"
+    ],
+    "post-update-cmd": [
+      "env php suzie/bootstrap/cdn.php"
+    ]
+  }
+}
