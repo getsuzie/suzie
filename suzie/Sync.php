@@ -420,7 +420,7 @@ class Sync
      */
     protected function fetchPathFromRemote($url)
     {
-        return str_replace($this->remoteUrl, $this->siteUrl.$this->uploads, $url);
+        return str_replace($this->remoteUrl, $this->siteUrl . "/", $url);
     }
 
     /**
@@ -444,7 +444,7 @@ class Sync
      */
     protected function fetchRemotePath($path)
     {
-        return str_replace($this->public.$this->uploads, '', $path);
+        return str_replace($this->public . '/', '', $path);
     }
 
     /**
