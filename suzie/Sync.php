@@ -337,7 +337,7 @@ class Sync
      */
     public function fetchFileIfNotFound($file, $attachment_id)
     {
-        if(!is_admin()) {
+        if(!is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
             return $file;
         }
 
