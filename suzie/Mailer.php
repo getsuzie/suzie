@@ -42,7 +42,11 @@ class Mailer
             $args['from'] = getenv('MAILGUN_FROM');
         }
 
-        $this->mailgun->sendMessage($this->domain, $args, $attachments);
+        try {
+            return $this->mailgun->sendMessage($this->domain, $args, $attachments);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -182,6 +186,6 @@ class Mailer
     {
         $suzieMailer = new self();
         list($args, $attachments) = call_user_func_array([$suzieMailer, 'fetchArguments'], func_get_args());
-        $suzieMailer->send($args, $attachments);
+        return $suzieMailer->send($args, $attachments);
     }
 }
