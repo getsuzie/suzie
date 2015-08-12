@@ -252,6 +252,10 @@ class Sync
         $this->ifFileThenDelete("remote://{$remote}");
 
         $remote = $this->removeFileName($remote);
+        
+        if (empty($metadata)) {
+           return;
+        }
 
         foreach ($metadata['sizes'] as $image) {
             $this->ifFileThenDelete("remote://{$remote}{$image['file']}");
@@ -309,6 +313,10 @@ class Sync
      */
     public function thumbnailUpload($metadata, $attachment_id)
     {
+        if (empty($metadata)) {
+           return $metadata;
+        }
+        
         $media = get_post($attachment_id);
 
         list($local, $remote) = $this->getPathsFromGuid($media->guid, true);
@@ -337,7 +345,7 @@ class Sync
      */
     public function fetchFileIfNotFound($file, $attachment_id)
     {
-        if(!is_admin()) {
+        if(!is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) {
             return $file;
         }
 
@@ -420,7 +428,7 @@ class Sync
      */
     protected function fetchPathFromRemote($url)
     {
-        return str_replace($this->remoteUrl, $this->siteUrl.$this->uploads, $url);
+        return str_replace($this->remoteUrl, $this->siteUrl . "/", $url);
     }
 
     /**
@@ -444,7 +452,7 @@ class Sync
      */
     protected function fetchRemotePath($path)
     {
-        return str_replace($this->public.$this->uploads, '', $path);
+        return str_replace($this->public . '/', '', $path);
     }
 
     /**

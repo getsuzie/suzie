@@ -19,7 +19,7 @@ Dotenv::load($rootPath);
  */
 function wp_mail($to, $subject, $message, $headers = '', $attachments = [])
 {
-    Suzie\Mailer::boot($to, $subject, $message, $headers, $attachments);
+    return Suzie\Mailer::boot($to, $subject, $message, $headers, $attachments);
 }
 
 function suzie()
