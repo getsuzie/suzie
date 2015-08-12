@@ -1,6 +1,10 @@
 <?php
 
+/*
+* Some setup
+*/
 define('DOING_CDN', true);
+$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
 
 /**
  * Set timeout.
@@ -29,9 +33,8 @@ $cdn = new Suzie\Cdn($sync->remoteUrl, true);
 if(getenv('CDN_ENABLED') == 'true') {
     $assets = $cdn->getApprovedAssets();
 
-    foreach ($assets as $url) {
-        echo "Uploading to CDN: {$url}" . PHP_EOL;
-
-        $sync->moveToRemote($url);
+    foreach ($assets as $file) {
+        echo "Uploading to CDN: {$file}" . PHP_EOL;
+        $sync->moveToRemote($file);
     }
 }

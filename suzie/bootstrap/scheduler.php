@@ -1,6 +1,10 @@
 <?php
 
+/*
+* Some setup
+*/
 define('DOING_CRON', true);
+$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http';
 
 /**
  * Set timeout.
@@ -15,7 +19,7 @@ $rootPath = realpath(__DIR__.'/../..');
 /*
  * Boot WordPress
  */
-require $rootPath.'/public/wordpress/wp-load.php';
+require_once $rootPath.'/public/wordpress/wp-load.php';
 
 /*
  * Boot Scheduler

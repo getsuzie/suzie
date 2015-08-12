@@ -252,9 +252,9 @@ class Sync
         $this->ifFileThenDelete("remote://{$remote}");
 
         $remote = $this->removeFileName($remote);
-        
+
         if (empty($metadata)) {
-           return;
+            return;
         }
 
         foreach ($metadata['sizes'] as $image) {
@@ -314,9 +314,9 @@ class Sync
     public function thumbnailUpload($metadata, $attachment_id)
     {
         if (empty($metadata)) {
-           return $metadata;
+            return $metadata;
         }
-        
+
         $media = get_post($attachment_id);
 
         list($local, $remote) = $this->getPathsFromGuid($media->guid, true);
@@ -459,15 +459,65 @@ class Sync
      * Moves local file to remote.
      *
      * @param $url
-     *
+     * @param $path
      * @return void
      */
-    public function moveToRemote($url)
+    public function moveToRemote($url, $path = false)
     {
-        $local = $this->fetchPath($url);
+        if($path)
+        {
+            $local = $this->fetchPath($url);
+        }
+        else
+        {
+            $local = $url;
+            $parts = explode("/{$this->public}/", $local);
+
+            if (isset($parts[1]))
+            {
+                $local = "/{$this->public}/".$parts[1];
+            }
+        }
+
         $remote = str_replace($this->public, '', $local);
 
         $this->ifFileThenDelete("remote://{$remote}");
         $this->manager->copy("local://{$local}", "remote://{$remote}");
+    }
+
+    /**
+     * Checks if remote file exists
+     *
+     * @param $url
+     * @param $path
+     *
+     * @return void
+     */
+    public function hasRemoteFile($url, $path = false)
+    {
+        if ($path)
+        {
+            $local = $this->fetchPath($url);
+        }
+        else
+        {
+            $local = $url;
+            $parts = explode("/{$this->public}/", $local);
+
+            if (isset($parts[1]))
+            {
+                $local = "/{$this->public}/".$parts[1];
+            }
+        }
+
+        $remote = str_replace($this->public, '', $local);
+
+        if (!$this->manager->has("remote://{$remote}"))
+        {
+            return false;
+        }
+
+        $this->manager->copy("remote://{$remote}", "local://{$local}");
+        return true;
     }
 }
