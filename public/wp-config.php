@@ -35,6 +35,15 @@ define('WP_DEBUG', getenv('WP_DEBUG') === 'true'? true: false);
 define('WP_LOCAL_DEV', getenv('WP_LOCAL_DEV') === 'true'? true: false);
 
 /**
+ * SSL
+ */
+define('FORCE_SSL_ADMIN', getenv('WP_FORCE_SSL') === 'true'? true: false);
+define('FORCE_SSL_LOGIN', getenv('WP_FORCE_SSL') === 'true'? true: false);
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    $_SERVER['HTTPS']='on';
+}
+
+/**
  * Set custom paths
  * These are required because wordpress is installed in a subdirectory
  */
@@ -89,6 +98,9 @@ if (!defined('ABSPATH'))
  */
 define('SUZIE_CDN_THEME', 'theme-name' );
 define('SUZIE_CDN_ASSETS', json_encode([
+
+]));
+define('SUZIE_CDN_FOLDERS', json_encode([
 
 ]));
 
