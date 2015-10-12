@@ -78,11 +78,6 @@ define('NONCE_SALT',       'L-A0er+ibw}s03sIp}dGeGu[!##sV_0Gt~OsZy8`K-DW(:_<D1GD
 $table_prefix = getenv('DB_PREFIX');
 
 /**
- * WordPress localized language, defaults to English.
- */
-define('WPLANG', '');
-
-/**
  * Absolute path to the WordPress directory.
  */
 if (!defined('ABSPATH'))
