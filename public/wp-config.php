@@ -60,16 +60,17 @@ define('DB_COLLATE', '');
 
 /**
  * Authentication unique keys and salts.
- * Generate these at: https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service
+ *
+ * @link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service
  */
-define('AUTH_KEY',         'Y67764N;I5-:2|DO!GPAP#B>8Ni:bLbI6(`Wuq)!j|H7JG+[Y/-4`+11mAW9XgSn');
-define('SECURE_AUTH_KEY',  '2uxhUWw$-kb)qA1.(Y/E2Q>,??2?hqN=_gDXt&X(]JF@U(WPj,]#YZS->,P!t5 p');
-define('LOGGED_IN_KEY',    'fB?)5ZaBLP*>!-9;8`em:-1_8_SGy17@-|7{0Q30#rJwtD>Iy11-t|60dx8h<tN^');
-define('NONCE_KEY',        'Pu8MkPU?Dytqth*O]hTbh|pg(H6zs|7L[j%OE-WjtGqkb0:p}yYIXZ!<P>fFmHZ:');
-define('AUTH_SALT',        'hI2Acz>?PljC#kA:ryzZ]H+>vOy%]|D#2y5Y>A::k|ec5[Mfq#[ Zdh}knZV,7l(');
-define('SECURE_AUTH_SALT', 'fV+VLHo5~W|;]0pFCoiLi-{8WhMgUU+Z31|&-6+T`E$vr~~q!S570%=QPz^9?7E[');
-define('LOGGED_IN_SALT',   'JVG}(FNqhQA1z3-6zZ%D5o[Kqn+$_0~ja0S_s>$8=#qZcy(w#OMnuS86PVJsOP/q');
-define('NONCE_SALT',       'L-A0er+ibw}s03sIp}dGeGu[!##sV_0Gt~OsZy8`K-DW(:_<D1GD?!*77J>h}(V&');
+define('AUTH_KEY',         'put your unique phrase here');
+define('SECURE_AUTH_KEY',  'put your unique phrase here');
+define('LOGGED_IN_KEY',    'put your unique phrase here');
+define('NONCE_KEY',        'put your unique phrase here');
+define('AUTH_SALT',        'put your unique phrase here');
+define('SECURE_AUTH_SALT', 'put your unique phrase here');
+define('LOGGED_IN_SALT',   'put your unique phrase here');
+define('NONCE_SALT',       'put your unique phrase here');
 
 /**
  * WordPress database table prefix.
