@@ -29,15 +29,25 @@ function wp_mail($to, $subject, $message, $headers = '', $attachments = [])
 
 function suzie()
 {
-    /*
-     * Sync
-     */
-    $sync = new Suzie\Sync();
+    $remoteUrl = getenv('SITE_URL');
+    if (getenv('SYNC') != 'off') {
+        /*
+         * Sync
+         */
+        $sync = new Suzie\Sync();
+        $remoteUrl = $sync->remoteUrl;
+
+        /*
+        * Set a global object for sync incase a plugin needs it
+        */
+        global $suzie_sync;
+        $suzie_sync = $sync;
+    }
 
     /*
      * Cdn
      */
-    new Suzie\Cdn($sync->remoteUrl);
+    new Suzie\Cdn($remoteUrl);
 
     /*
      * Varnish
@@ -63,12 +73,6 @@ function suzie()
             die(0);
         }
     });
-
-    /*
-    * Set a global object for sync incase a plugin needs it
-    */
-    global $suzie_sync;
-    $suzie_sync = $sync;
 
     do_action('suzie');
 }

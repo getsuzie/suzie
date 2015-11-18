@@ -22,15 +22,14 @@ $rootPath = realpath(__DIR__.'/../..');
 require $rootPath.'/public/wp-config.php';
 
 /*
- * Boot Sync & CDN
- */
-$sync = new Suzie\Sync(true);
-$cdn = new Suzie\Cdn($sync->remoteUrl, true);
-
-/*
  * Loop assets and move them to remote
  */
-if(getenv('CDN_ENABLED') == 'true') {
+if(getenv('CDN_ENABLED') == 'true' && getenv('SYNC') != 'off') {
+    /*
+     * Boot Sync & CDN
+     */
+    $sync = new Suzie\Sync(true);
+    $cdn = new Suzie\Cdn($sync->remoteUrl, true);
     $assets = $cdn->getApprovedAssets();
 
     foreach ($assets as $file) {
