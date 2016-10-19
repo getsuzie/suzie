@@ -59,7 +59,8 @@ class GoogleCloudStorage
         add_filter('authenticate',  [$this, 'authenticate'], 1, 3);
         add_action('suzie', [$this, 'bootCustomAuth'], 1);
         add_filter('image_downsize', [$this, 'handleImageDownsize'], 1, 3);
-        add_filter('intermediate_image_sizes_advanced', [$this, 'removeResizedImages'], 10, 2);
+        add_filter('wp_image_editors', [$this, 'filterImageEditor'], 1);
+        add_filter('wp_calculate_image_srcset', [$this, 'attachmentLinkRewriteSrcSet'], 10, 5);
     }
 
     /**
@@ -118,9 +119,12 @@ class GoogleCloudStorage
      */
     public function setGcsUploadUrl($url, $path)
     {
-        global $parent_file;
+        $screen = get_current_screen();
 
-        if ($parent_file == 'upload.php' && $path == 'media-new.php') {
+        if ( $screen->parent_file == 'upload.php'
+             && $path == 'media-new.php'
+             && $screen->id == 'media'
+        ) {
             $this->removeFormFilters();
             return $this->gcsUploadUrl($url);
         }
@@ -250,6 +254,10 @@ class GoogleCloudStorage
         $file = get_attached_file($id);
         $intermediate = false;
 
+        if (0 !== strpos( $file, 'gs://' )) {
+            return $data;
+        }
+
         if ( is_array($size) ) {
             $size = [
                 'width' => $size[0],
@@ -268,7 +276,19 @@ class GoogleCloudStorage
             $size = $imageSizes[$size];
         }
 
-        $options = [
+        $url = $this->getUrlWithSizing($file, $size);
+
+        return [
+            $url,
+            $size['width'],
+            $size['height'],
+            $intermediate
+        ];
+    }
+
+    public function getUrlWithSizing($file, $size)
+    {
+         $options = [
             'secure_url' => true
         ];
 
@@ -288,20 +308,7 @@ class GoogleCloudStorage
             $url .= '=s0';
         }
 
-        return [
-            $url,
-            $size['width'],
-            $size['height'],
-            $intermediate
-        ];
-    }
-
-     /**
-     * Removed different image sizes which dont need to be stored
-     */
-    public function removeResizedImages($sizes, $metadata = [])
-    {
-        return [];
+        return $url;
     }
 
      /**
@@ -325,4 +332,116 @@ class GoogleCloudStorage
         return $image_sizes;
     }
 
+     /**
+     * Rewrite URLs for srcset
+     */
+    public function attachmentLinkRewriteSrcSet($sources, $size_array, $image_src, $image_meta, $attachment_id)
+    {
+        if (!is_array($sources)) {
+            return $sources;
+        }
+
+        foreach ($sources as $key => $src) {
+
+            $size = [
+                'width' => '',
+                'height' => '',
+                'crop' => false
+            ];
+
+            $storedSize = false;
+
+            foreach ($image_meta['sizes'] as $image) {
+                if ( $src['descriptor'] == 'w' && $image['width'] == $src['value'] ) {
+                    $storedSize = $image;
+                    break;
+                } elseif ( $src['descriptor'] == 'h' && $image['height'] == $src['value'] ) {
+                    $storedSize = $image;
+                    break;
+                }
+            }
+
+            if ($storedSize) {
+
+                $crop = true;
+
+                if ( $storedSize['width'] == 0 || $storedSize['width'] == 9999 ) {
+                    $storedSize['width'] = '';
+                    $crop = false;
+                }
+
+                if ( $storedSize['height'] == 0 || $storedSize['height'] == 9999 ) {
+                    $storedSize['height'] = '';
+                    $crop = false;
+                }
+
+                $size = [
+                    'width' => $storedSize['width'],
+                    'height' => $storedSize['height'],
+                    'crop' => $crop
+                ];
+
+            }
+
+            $sources[$key]['url'] = $this->getUrlWithSizing(
+                'gs://' . $this->bucketName . '/' . $image_meta['file'],
+                $size);
+        }
+
+        return $sources;
+    }
+
+    /**
+     * Add custom Image Editor to work around resized images being added
+     * when GCS doesn't need them
+     */
+    public function filterImageEditor($editors)
+    {
+        return ['Suzie\Sync\GCS_Image_Editor_Imagick', 'Suzie\Sync\GCS_Image_Editor_GD'];
+    }
+
+}
+
+ /**
+ * Unfortunate way to stop resized image being created,
+ * using intermediate_image_sizes_advanced causes empty metadata which
+ * affects srcset images. Therefore this is best working solution so far.
+ */
+$rootPath = realpath(__DIR__.'/../..');
+require_once $rootPath . '/public/wordpress/wp-includes/class-wp-image-editor.php';
+require_once $rootPath . '/public/wordpress/wp-includes/class-wp-image-editor-gd.php';
+require_once $rootPath . '/public/wordpress/wp-includes/class-wp-image-editor-imagick.php';
+
+class GCS_Image_Editor_Imagick extends \WP_Image_Editor_Imagick
+{
+    public function multi_resize($sizes)
+    {
+        $result = [];
+        foreach ($sizes as $size) {
+            $result[] = [
+                'file'      => wp_basename( $this->file ),
+                'width'     => $size['width'],
+                'height'    => $size['height'],
+                'mime-type' => $this->mime_type
+            ];
+        }
+        return $result;
+    }
+}
+
+class GCS_Image_Editor_GD extends \WP_Image_Editor_GD
+{
+    public function multi_resize($sizes)
+    {
+        $result = [];
+        foreach ($sizes as $size) {
+            $result[] = [
+                'file'      => wp_basename( $this->file ),
+                'width'     => $size['width'],
+                'height'    => $size['height'],
+                'mime-type' => $this->mime_type
+            ];
+        }
+        return $result;
+    }
 }
