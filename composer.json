@@ -15,7 +15,7 @@
     ]
   },
   "require": {
-    "johnpbloch/wordpress": "4.2.*",
+    "johnpbloch/wordpress": "4.*",
     "vlucas/phpdotenv": "1.1.*",
     "league/flysystem": "~1.0",
     "league/flysystem-aws-s3-v2": "~1.0",
@@ -31,11 +31,7 @@
     "wordpress-install-dir": "public/wordpress"
   },
   "scripts": {
-    "post-install-cmd": [
-      "env php suzie/bootstrap/cdn.php"
-    ],
-    "post-update-cmd": [
-      "env php suzie/bootstrap/cdn.php"
-    ]
+    "post-install-cmd": [],
+    "post-update-cmd": []
   }
 }
