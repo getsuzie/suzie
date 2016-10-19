@@ -29,25 +29,15 @@ function wp_mail($to, $subject, $message, $headers = '', $attachments = [])
 
 function suzie()
 {
-    $remoteUrl = getenv('SITE_URL');
-    if (getenv('SYNC') != 'off') {
-        /*
-         * Sync
-         */
-        $sync = new Suzie\Sync();
-        $remoteUrl = $sync->remoteUrl;
-
-        /*
-        * Set a global object for sync incase a plugin needs it
-        */
-        global $suzie_sync;
-        $suzie_sync = $sync;
-    }
+    /*
+     * Sync
+     */
+    new Suzie\Sync();
 
     /*
      * Cdn
      */
-    new Suzie\Cdn($remoteUrl);
+    new Suzie\Cdn();
 
     /*
      * Varnish

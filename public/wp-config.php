@@ -86,30 +86,9 @@ if (!defined('ABSPATH'))
     define('ABSPATH', dirname(__FILE__) . '/');
 }
 
-/**
- * Suzie settings.
- * Use {theme} or {plugin} for directory paths.
- */
-
-// Set theme name for CDN.
-define('SUZIE_CDN_THEME', 'theme-name');
-
-// Assets to send to CDN.
-define('SUZIE_CDN_ASSETS', json_encode([
-
-]));
-
-// Folders to send to CDN.
-define('SUZIE_CDN_FOLDERS', json_encode([
-
-]));
-
-// Sets up WordPress vars and included files.
-if (defined('DOING_CDN'))
-{
-    return;
-}
-
 require_once(ABSPATH . 'wp-settings.php');
 
+/**
+ * Start Suzie
+ */
 suzie();
