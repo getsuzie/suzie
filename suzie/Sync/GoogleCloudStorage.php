@@ -308,6 +308,8 @@ class GoogleCloudStorage
             $url .= '=s0';
         }
 
+        $url .= '?' . wp_basename($file);
+
         return $url;
     }
 
@@ -363,22 +365,10 @@ class GoogleCloudStorage
 
             if ($storedSize) {
 
-                $crop = true;
-
-                if ( $storedSize['width'] == 0 || $storedSize['width'] == 9999 ) {
-                    $storedSize['width'] = '';
-                    $crop = false;
-                }
-
-                if ( $storedSize['height'] == 0 || $storedSize['height'] == 9999 ) {
-                    $storedSize['height'] = '';
-                    $crop = false;
-                }
-
                 $size = [
                     'width' => $storedSize['width'],
                     'height' => $storedSize['height'],
-                    'crop' => $crop
+                    'crop' => true
                 ];
 
             }
