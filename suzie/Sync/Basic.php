@@ -240,8 +240,9 @@ class Basic
         global $wpdb;
 
         $query = $wpdb->prepare(
-            "UPDATE $wpdb->posts SET guid = %s",
-            $remoteUrl
+            "UPDATE $wpdb->posts SET guid = %s WHERE ID = %d",
+            $remoteUrl,
+            $post_id
         );
 
         $wpdb->query($query);
@@ -329,6 +330,10 @@ class Basic
      */
     public function attachmentLinkRewriteSrcSet($sources, $size_array, $image_src, $image_meta, $attachment_id)
     {
+        if (!is_array($sources)) {
+            return $sources;
+        }
+
         $useCdn = false;
         if(getenv('CDN_ASSET_URL') && getenv('CDN_ASSET_ENABLED') == 'true' && !is_admin()) {
             $useCdn = true;
